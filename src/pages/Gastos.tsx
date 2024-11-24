@@ -1,52 +1,106 @@
+import moment from "moment";
+import { Table } from "../components/Table";
+import useExpenses from "../hook/useExpenses";
+import { Gasto } from "../types";
+import useUsers from "../hook/useUsers";
+import useBudgets from "../hook/useBudget";
 
-import { Table } from '../components/Table';
-import { ShoppingBag, Coffee, Home, Car, Heart, Music } from 'lucide-react';
 
-const gastos = [
-  { id: 1, categoria: 'Compras', monto: -120.50, fecha: '15 mar 2024', icon: ShoppingBag, color: 'bg-blue-100 text-blue-600' },
-  { id: 2, categoria: 'Café', monto: -4.99, fecha: '15 mar 2024', icon: Coffee, color: 'bg-amber-100 text-amber-600' },
-  { id: 3, categoria: 'Alquiler', monto: -1200, fecha: '14 mar 2024', icon: Home, color: 'bg-green-100 text-green-600' },
-  { id: 4, categoria: 'Seguro Auto', monto: -89.99, fecha: '14 mar 2024', icon: Car, color: 'bg-red-100 text-red-600' },
-  { id: 5, categoria: 'Salud', monto: -45.00, fecha: '13 mar 2024', icon: Heart, color: 'bg-pink-100 text-pink-600' },
-  { id: 6, categoria: 'Entretenimiento', monto: -15.99, fecha: '13 mar 2024', icon: Music, color: 'bg-purple-100 text-purple-600' },
-];
+interface ExpenseRow {
+  id: number;
+  presupuesto_id: number;
+  tipo:string;
+  usuario_id: number;
+  monto: number;
+  estado:number;
+  fecha?: Date;
+}
 
-const columns = [
-  {
-    header: 'Categoría',
-    accessor: 'categoria',
-    cell: (row: any) => (
-      <div className="flex items-center space-x-3">
-        <div className={`p-2 rounded-lg ${row.color}`}>
-          <row.icon className="h-5 w-5" />
-        </div>
-        <span>{row.categoria}</span>
-      </div>
-    ),
-  },
-  {
-    header: 'Monto',
-    accessor: 'monto',
-    cell: (row: any) => (
-      <span className="font-semibold text-red-500">
-        ${Math.abs(row.monto).toFixed(2)}
-      </span>
-    ),
-  },
-  {
-    header: 'Fecha',
-    accessor: 'fecha',
-  },
-];
 
 export default function Gastos() {
+  const { expense } = useExpenses();
+  const {users} = useUsers();
+  const {budget} = useBudgets();
+
+
+
+  const findUser = (id: number) => {
+    const user = users.find((user) => user.id === id);
+    return user ? user.nombres : "Usuario no encontrado";
+  };
+
+  const findBudget = (id: number) => {
+    const budgets = budget.find((budget) => budget.id === id);
+    return budgets ? budgets.limite: "Presupuesto no encontrado";
+  }
+
+
+
+  const transformedExpense: Gasto[] = expense.map((expense) => ({
+    id: expense.id,
+    presupuesto_id: expense.presupuesto_id,
+    tipo: expense.tipo,
+    usuario_id: expense.usuario_id,
+    monto: expense.monto,
+    estado: expense.estado,
+    fecha: expense.fecha,
+
+
+  }));
+
+  const columns = [
+    {
+      header: "Usuario",
+      accessor: "usuario_id",
+      cell: (row: ExpenseRow) => {
+        return findUser(row.usuario_id);
+      },
+    },
+  
+    {
+      header: "Presupuesto",
+      accessor: "presupuesto_id",
+      cell: (row: ExpenseRow) => {
+        return findBudget(row.presupuesto_id);
+      },
+    },
+    {
+      
+      header: "Categoría",
+      accessor: "categoria",
+      cell: (row: ExpenseRow) => (
+        <div className="flex items-center space-x-3">
+  
+          <span>{row.tipo}</span>
+        </div>
+      ),
+    },
+    {
+      header: "Monto",
+      accessor: "monto",
+      cell: (row: ExpenseRow) => (
+        <span className="font-semibold text-red-500">
+          ${Math.abs(row.monto).toFixed(2)}
+        </span>
+      ),
+    },
+    {
+      header: "Fecha",
+      accessor: "fecha",
+      cell: (row: ExpenseRow) => moment(row.fecha).format("DD/MM/YYYY"),
+    },
+  ];
+
+
+
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Gastos</h1>
         <button className="btn btn-primary">Nuevo Gasto</button>
       </div>
-      <Table data={gastos} columns={columns} />
+      <Table data={transformedExpense} columns={columns} />
     </div>
   );
 }

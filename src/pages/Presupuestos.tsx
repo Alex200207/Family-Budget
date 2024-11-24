@@ -1,53 +1,87 @@
-import React from 'react';
-import { Table } from '../components/Table';
+import { Table } from "../components/Table";
+import useBudget from "../hook/useBudget";
+import useExpenses from "../hook/useExpenses";
 
-const presupuestos = [
-  { id: 1, categoria: 'Vivienda', asignado: 1500, gastado: 1125, restante: 375, porcentaje: 75 },
-  { id: 2, categoria: 'Alimentación', asignado: 800, gastado: 480, restante: 320, porcentaje: 60 },
-  { id: 3, categoria: 'Transporte', asignado: 400, gastado: 180, restante: 220, porcentaje: 45 },
-  { id: 4, categoria: 'Entretenimiento', asignado: 200, gastado: 180, restante: 20, porcentaje: 90 },
-  { id: 5, categoria: 'Salud', asignado: 300, gastado: 90, restante: 210, porcentaje: 30 },
-];
 
-const columns = [
-  { header: 'Categoría', accessor: 'categoria' },
-  {
-    header: 'Asignado',
-    accessor: 'asignado',
-    cell: (row: any) => `$${row.asignado.toFixed(2)}`,
-  },
-  {
-    header: 'Gastado',
-    accessor: 'gastado',
-    cell: (row: any) => `$${row.gastado.toFixed(2)}`,
-  },
-  {
-    header: 'Restante',
-    accessor: 'restante',
-    cell: (row: any) => `$${row.restante.toFixed(2)}`,
-  },
-  {
-    header: 'Progreso',
-    accessor: 'porcentaje',
-    cell: (row: any) => (
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
-        <div
-          className="bg-indigo-600 h-2.5 rounded-full"
-          style={{ width: `${row.porcentaje}%` }}
-        />
-      </div>
-    ),
-  },
-];
+interface BudgetRow {
+  id: number;
+  fecha_inicio?: Date;
+  fecha_fin?: Date;
+  limite: number;
+  categoria: string;
+  gastado: number;
+  restante: number;
+  porcentaje: number;
+}
 
 export default function Presupuestos() {
+  const { expense } = useExpenses(); // Arreglo de gastos
+  const { budget } = useBudget(); // Arreglo de presupuestos
+
+  const columns = [
+    {
+      header: "name",
+      accessor: "categoria",
+      cell: (row: BudgetRow) => row.categoria,
+    },
+    
+    {
+      header: "Asignado",
+      accessor: "limite",
+      cell: (row: BudgetRow) => `$${row.limite.toFixed(2)}`,
+    },
+    {
+      header: "Gastado",
+      accessor: "gastado",
+      cell: (row: BudgetRow) => `$${row.gastado.toFixed(2)}`,
+    },
+    {
+      header: "Restante",
+      accessor: "restante",
+      cell: (row: BudgetRow) => `$${row.restante.toFixed(2)}`,
+    },
+    {
+      header: "Progreso",
+      accessor: "porcentaje",
+      cell: (row: BudgetRow) => (
+        <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div
+            className="bg-indigo-600 h-2.5 rounded-full"
+            style={{ width: `${row.porcentaje}%` }}
+          />
+        </div>
+      ),
+    },
+  ];
+
+  // Transformar presupuestos con cálculos dinámicos
+  const transformedBudget: BudgetRow[] = budget.map((budgets) => {
+    const totalGastado = expense
+      .filter((exp) => exp.presupuesto_id === budgets.id) // Filtra gastos por presupuesto
+      .reduce((sum, exp) => sum + exp.monto, 0); // Suma los montos de los gastos
+
+    const restante = budgets.limite - totalGastado;
+    const porcentaje = (totalGastado / budgets.limite) * 100;
+
+    return {
+      id: budgets.id,
+      fecha_inicio: budgets.fecha_inicio,
+      fecha_fin: budgets.fecha_fin,
+      limite: budgets.limite,
+      categoria: budgets.categoria,
+      gastado: totalGastado,
+      restante: Math.max(restante, 0), // Asegúrate de que no sea negativo
+      porcentaje: Math.min(porcentaje, 100), // Máximo 100%
+    };
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Presupuestos</h1>
         <button className="btn btn-primary">Nuevo Presupuesto</button>
       </div>
-      <Table data={presupuestos} columns={columns} />
+      <Table data={transformedBudget} columns={columns} />
     </div>
   );
 }

@@ -3,10 +3,12 @@ import React from 'react';
 interface Column {
   header: string;
   accessor: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cell?: (row: any) => React.ReactNode;
 }
 
 interface TableProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[];
   columns: Column[];
 }

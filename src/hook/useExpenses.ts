@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { getExpenses } from "../service/ExpensesServices";
+import { Gasto } from "../types";
 
 const useExpenses = () => {
-  const [expense, setExpense] = useState([]);
+  const [expense, setExpense] = useState<Gasto[]>([]);
   const [reload, setReload] = useState<boolean>(false);
 
   useEffect(() => {
