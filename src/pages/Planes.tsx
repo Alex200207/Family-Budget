@@ -17,7 +17,14 @@ interface PlanRow {
   fecha: string;
   progreso: number;
   usuario_id: number;
+  rol_user: number;
 }
+const roleMap: { [key: number]: string } = {
+  1: "Padre",
+  2: "Madre",
+  3: "Hijo",
+
+};
 
 export default function Planes() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +37,13 @@ export default function Planes() {
       accessor: "usuario_id",
       cell: (row: PlanRow) => {
         return findUser(row.usuario_id);
+      },
+    },
+    {
+      header: "Rol",
+      accessor: "rol",
+      cell: (row: PlanRow) => {
+        return findRol(row.rol_user);
       },
     },
 
@@ -84,8 +98,13 @@ export default function Planes() {
     return userData ? userData.nombres : "sin usuario";
   };
 
+  const findRol = (rolID: number) => {
+    const rolData = users.find((u) => u.id === rolID);
+    return rolData ? roleMap[rolData.rol] || "Rol desconocido" : "Sin rol";
+  };
   const transformedPlans: PlanRow[] = plans.map((plan) => ({
     id: plan.id,
+    rol_user: plan.usuario_id,
     titulo: plan.objetivo,
     descripcion: `${plan.descripcion} `,
     color: "bg-blue-500",
@@ -101,9 +120,9 @@ export default function Planes() {
     setIsModalOpen(true);
   };
 
-  // Función para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
+    console.log("cerrar");
   };
 
   return (
@@ -117,9 +136,7 @@ export default function Planes() {
 
       <Table data={transformedPlans} columns={columns} />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-
         <FormAdd />
-       
       </Modal>
     </div>
   );

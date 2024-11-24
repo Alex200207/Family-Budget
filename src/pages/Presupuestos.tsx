@@ -41,7 +41,7 @@ export default function Presupuestos() {
       cell: (row: BudgetRow) => `$${row.restante.toFixed(2)}`,
     },
     {
-      header: "Progreso",
+      header: "Limite",
       accessor: "porcentaje",
       cell: (row: BudgetRow) => (
         <div className="w-full bg-gray-200 rounded-full h-2.5">

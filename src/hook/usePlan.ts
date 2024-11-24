@@ -10,6 +10,7 @@ export interface Plan {
   meta: number;
   usuario_id: number;
   descripcion: string;
+ 
 }
 
 const usePlan = () => {
