@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { ShoppingBag, Coffee, Home, Car, Heart, Music } from 'lucide-react';
 
 const expenses = [

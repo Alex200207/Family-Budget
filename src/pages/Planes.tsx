@@ -3,9 +3,10 @@ import "moment/locale/es";
 import usePlan from "../hook/usePlan";
 import { Table } from "../components/Table";
 import useUsers from "../hook/useUsers";
-import Modal from "../components/modal/Modal";
+import Modal from "../components/modal/CustomModal";
 import { useState } from "react";
 import FormAdd from "../components/modal/FormAdd";
+import AddAmountModal from "../components/modal/AddAmountModal";
 
 interface PlanRow {
   id: number;
@@ -17,18 +18,14 @@ interface PlanRow {
   fecha: string;
   progreso: number;
   usuario_id: number;
-  rol_user: number;
 }
-const roleMap: { [key: number]: string } = {
-  1: "Padre",
-  2: "Madre",
-  3: "Hijo",
-
-};
 
 export default function Planes() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { plans } = usePlan();
+  const [selectedPlan, setSelectedPlan] = useState<PlanRow | null>(null);
+  const [isAddAmountModalOpen, setIsAddAmountModalOpen] = useState(false);
+
+  const { plans ,reloadData} = usePlan();
   const { users } = useUsers();
 
   const columns = [
@@ -37,13 +34,6 @@ export default function Planes() {
       accessor: "usuario_id",
       cell: (row: PlanRow) => {
         return findUser(row.usuario_id);
-      },
-    },
-    {
-      header: "Rol",
-      accessor: "rol",
-      cell: (row: PlanRow) => {
-        return findRol(row.rol_user);
       },
     },
 
@@ -91,6 +81,26 @@ export default function Planes() {
         </div>
       ),
     },
+    {
+      header: "Acciones",
+      accessor: "id",
+      cell: (row: PlanRow) => (
+        <div className="flex items-center space-x-3">
+          <button
+            className="btn btn-secondary"
+            onClick={() => openAddAmountModal(row)}
+          >
+            +
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={() => openAddAmountModal(row)}
+          >
+            -
+          </button>
+        </div>
+      ),
+    },
   ];
 
   const findUser = (userID: number) => {
@@ -98,13 +108,8 @@ export default function Planes() {
     return userData ? userData.nombres : "sin usuario";
   };
 
-  const findRol = (rolID: number) => {
-    const rolData = users.find((u) => u.id === rolID);
-    return rolData ? roleMap[rolData.rol] || "Rol desconocido" : "Sin rol";
-  };
   const transformedPlans: PlanRow[] = plans.map((plan) => ({
     id: plan.id,
-    rol_user: plan.usuario_id,
     titulo: plan.objetivo,
     descripcion: `${plan.descripcion} `,
     color: "bg-blue-500",
@@ -120,10 +125,23 @@ export default function Planes() {
     setIsModalOpen(true);
   };
 
+  // Función para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
-    console.log("cerrar");
   };
+  const openAddAmountModal = (plan: PlanRow) => {
+    setSelectedPlan(plan);
+    setIsAddAmountModalOpen(true);
+  };
+
+  const closeAddAmountModal = () => {
+    setSelectedPlan(null);
+    setIsAddAmountModalOpen(false);
+  };
+
+  const handleSaveAmount = () => {
+    console.log('add');
+  }
 
   return (
     <div className="space-y-6">
@@ -136,8 +154,12 @@ export default function Planes() {
 
       <Table data={transformedPlans} columns={columns} />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <FormAdd />
+        <FormAdd onClose={closeModal} reloadData={reloadData}/>
       </Modal>
+      <AddAmountModal
+        plan={selectedPlan}
+        onClose={closeAddAmountModal}
+        onSave={handleSaveAmount} isOpen={isAddAmountModalOpen}      />
     </div>
   );
 }
