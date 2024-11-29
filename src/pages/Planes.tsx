@@ -26,7 +26,7 @@ export default function Planes() {
   const [isFormAddModalOpen, setIsFormAddModalOpen] = useState(false);
   const [isFormEditModalOpen, setIsFormEditModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<PlanRow | null>(null);
-  const [selectAmount, setSelectAmount] = useState<PlanRow| null>(null);
+  const [selectAmount, setSelectAmount] = useState<PlanRow | null>(null);
   const [isAddAmountModalOpen, setIsAddAmountModalOpen] = useState(false);
 
   const { plans, reloadData, deletePlans, incrementAmounts, editPlanData } =
@@ -37,6 +37,7 @@ export default function Planes() {
     await deletePlans(id);
     reloadData();
   };
+
   const updateAmount = async (plan: PlanRow, amount: number) => {
     await incrementAmounts(plan.id.toString(), amount);
     reloadData();
@@ -56,12 +57,11 @@ export default function Planes() {
         return findUser(row.usuario_id);
       },
     },
-
     {
       header: "Objetivo",
       accessor: "titulo",
       cell: (row: PlanRow) => (
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col sm:flex-row sm:space-x-3">
           <div>
             <div className="font-medium">{row.titulo}</div>
             <div className="text-sm text-gray-500">{row.descripcion}</div>
@@ -105,16 +105,16 @@ export default function Planes() {
       header: "Acciones",
       accessor: "id",
       cell: (row: PlanRow) => (
-        <div className="flex items-center space-x-3">
+        <div className="flex flex-col sm:flex-row sm:space-x-3">
           <button
-            className="btn btn-secondary"
+            className="btn btn-secondary mb-2 sm:mb-0"
             onClick={() => openAddAmountModal(row)}
           >
             +
           </button>
 
           <button
-            className="border border-red-600 rounded-sm px-2 py-1 text-red-600 hover:bg-red-600 hover:text-white"
+            className="border border-red-600 rounded-sm px-2 py-1 text-red-600 hover:bg-red-600 hover:text-white mb-2 sm:mb-0"
             onClick={() => handleDelete(row.id.toString())}
           >
             Eliminar
@@ -175,18 +175,20 @@ export default function Planes() {
     setSelectAmount(null);
     setIsAddAmountModalOpen(false);
   };
-  console.log("Plan recibido:", plans);
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Planes Financieros</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-center">
+        <h1 className="text-2xl font-semibold mb-4 sm:mb-0">Planes Financieros</h1>
         <button className="btn btn-primary" onClick={openModal}>
           Nuevo Plan
         </button>
       </div>
 
-      <Table data={transformedPlans} columns={columns} />
+      <div className="overflow-x-auto">
+        <Table data={transformedPlans} columns={columns} />
+      </div>
+
       <Modal isOpen={isFormAddModalOpen} onClose={closeFormAddModal}>
         <FormAdd onClose={closeFormAddModal} reloadData={reloadData} />
       </Modal>

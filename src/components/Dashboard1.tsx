@@ -1,12 +1,27 @@
-import React from 'react';
 import { PieChart, Wallet, TrendingUp, Users } from 'lucide-react';
 
+import useUsers from '../hook/useUsers';
+import useExpenses from '../hook/useExpenses';
+
 export default function Dashboard() {
+  const { users } = useUsers();
+  const {  expense} = useExpenses();
+
+  const showExpenseTotal = () => {
+    let total = 0;
+    expense.forEach((exp) => {
+      total += exp.monto;
+    });
+    return total;
+  }
+
+
+
   const estadisticas = [
     { titulo: 'Balance Total', cantidad: '$5.240', cambio: '+8%', icon: Wallet },
     { titulo: 'Gastos Mensuales', cantidad: '$1.850', cambio: '-2%', icon: PieChart },
-    { titulo: 'Ingresos Mensuales', cantidad: '$4.250', cambio: '+12%', icon: TrendingUp },
-    { titulo: 'Miembros Familia', cantidad: '4', cambio: '0', icon: Users },
+    { titulo: 'Ingresos Mensuales', cantidad: `${showExpenseTotal()}`, cambio: '+12%', icon: TrendingUp },
+    { titulo: 'Miembros Familia', cantidad: `${users.length}`, icon: Users },
   ];
 
   return (
@@ -24,10 +39,10 @@ export default function Dashboard() {
           </div>
           <div className="mt-4">
             <span className={`text-sm ${
-              stat.cambio.startsWith('+') ? 'text-green-500' : 
+              stat.cambio?.startsWith('+') ? 'text-green-500' : 
               stat.cambio === '0' ? 'text-gray-500' : 'text-red-500'
             }`}>
-              {stat.cambio} respecto al mes anterior
+              {stat.cambio}
             </span>
           </div>
         </div>

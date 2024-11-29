@@ -22,11 +22,10 @@ const updateBudgetLimit = async (
   gastoMonto: number
 ) => {
   try {
-   
     const response = await axios.patch(
       `${API_URL}/presupuesto/${presupuestoId}/${gastoID}`,
       {
-        gastoMonto: gastoMonto, 
+        gastoMonto: gastoMonto,
       }
     );
     return response.data;
@@ -36,6 +35,19 @@ const updateBudgetLimit = async (
   }
 };
 
+const getAmountExpenses = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/gastos/total`);
+
+    if (response.status === 200) {
+      return response.data;
+    }
+    return [];
+  } catch (error) {
+    console.error("Error al obtener el monto de los gastos", error);
+    throw error;
+  }
+};
 
 const createExpense = async (newExpense: Gasto): Promise<Gasto> => {
   try {
@@ -51,4 +63,4 @@ const createExpense = async (newExpense: Gasto): Promise<Gasto> => {
   }
 };
 
-export { getExpenses, createExpense, updateBudgetLimit };
+export { getExpenses, createExpense, updateBudgetLimit, getAmountExpenses };

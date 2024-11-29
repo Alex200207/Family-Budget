@@ -15,7 +15,7 @@ interface TableProps {
 
 export function Table({ data, columns }: TableProps) {
   return (
-    <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+    <div className="bg-white shadow-sm rounded-lg overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
@@ -33,7 +33,7 @@ export function Table({ data, columns }: TableProps) {
           {data.map((row, i) => (
             <tr key={i} className="hover:bg-gray-50">
               {columns.map((column) => (
-                <td key={column.accessor} className="px-6 py-4 whitespace-nowrap">
+                <td key={column.accessor} className="px-6 py-4 whitespace-nowrap text-sm">
                   {column.cell ? column.cell(row) : row[column.accessor]}
                 </td>
               ))}

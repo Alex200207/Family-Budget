@@ -30,8 +30,8 @@ export default function Gastos() {
   };
 
   const findBudget = (id: number) => {
-    const budgets = budget.find((budget) => budget.id === id);
-    return budgets ? budgets.limite : 0;
+    const presupuesto = budget.find((budget) => budget.id === id);
+    return presupuesto ? presupuesto.limite : 0;
   };
 
   const openModal = () => {
@@ -68,9 +68,7 @@ export default function Gastos() {
       accessor: "presupuesto_id",
       cell: (row: ExpenseRow) => {
         const presupuestoLimite = findBudget(row.presupuesto_id);
-        // Si el presupuesto es menor que 0, mostrar 0
-        const presupuestoMostrar =
-          presupuestoLimite < 0 ? 0 : presupuestoLimite;
+        const presupuestoMostrar = presupuestoLimite < 0 ? 0 : presupuestoLimite;
         return `$${presupuestoMostrar.toFixed(2)}`;
       },
     },
@@ -96,7 +94,6 @@ export default function Gastos() {
       header: "Estado",
       accessor: "estado",
       cell: (row: ExpenseRow) => {
-       
         let estadoText = "Pendiente";
         let estadoColor = "bg-red-500";
         if (row.estado === 1) {
@@ -115,9 +112,11 @@ export default function Gastos() {
     },
     {
       header: "Deuda",
-      accessor: "restante",
+      accessor: "deuda",
       cell: (row: ExpenseRow) => (
-        <span className="font-semibold text-red-500">{row.deuda}</span>
+        <span className="font-semibold text-red-500">
+          ${Math.abs(row.deuda ?? 0).toFixed(2)}
+        </span>
       ),
     },
     {
@@ -128,7 +127,7 @@ export default function Gastos() {
       },
     },
     {
-      header: "acciones",
+      header: "Acciones",
       accessor: "acciones",
       cell: (row: ExpenseRow) => (
         <div className="flex items-center space-x-3">
@@ -148,14 +147,17 @@ export default function Gastos() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-center sm:space-x-6">
         <h1 className="text-2xl font-semibold">Planes Financieros</h1>
         <button className="btn btn-primary" onClick={openModal}>
           Nuevo Gasto
         </button>
       </div>
-      <Table data={transformedExpense} columns={columns} />
+      <div className="overflow-x-auto">
+        <Table data={transformedExpense} columns={columns} />
+      </div>
 
+      {/* Modal para agregar nuevo gasto */}
       <CustomModal isOpen={isFormAddModalOpen} onClose={closeFormAddModal}>
         <FormAddExpense
           onClose={closeFormAddModal}

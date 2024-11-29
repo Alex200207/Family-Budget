@@ -16,7 +16,6 @@ export default function Navbar() {
               <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center">
                 <User className="h-5 w-5" />
               </div>
-              <span className="hidden md:block">Familia Rodríguez</span>
             </div>
           </div>
         </div>

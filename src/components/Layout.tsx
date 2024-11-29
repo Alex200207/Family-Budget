@@ -5,14 +5,16 @@ import Sidebar from './Sidebar';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col w-screen h-screen">
+      {/* Navbar */}
       <Navbar />
-      <div className="flex">
+      <div className="flex flex-1 ">
+        {/* Sidebar */}
         <Sidebar />
-        <main className="flex-1 p-8">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 p-4 ">
+            <div className="max-w-full mx-auto h-full">
             <Outlet />
-          </div>
+            </div>
         </main>
       </div>
     </div>
