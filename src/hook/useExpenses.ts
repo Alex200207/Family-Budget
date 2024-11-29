@@ -46,32 +46,35 @@ const useExpenses = () => {
         throw new Error("Presupuesto no encontrado");
       }
 
-      // Verifica si hay suficiente presupuesto
+ 
       const deuda = Math.max(0, newExpense.monto - presupuesto.limite);
       const montoRestante = Math.max(0, presupuesto.limite - newExpense.monto);
 
-      const estado = deuda > 0 ? 2 : 1; // 2 = pendiente, 1 = pagado
+      const estado = deuda > 0 ? 2 : 1; 
 
       const expenseWithDetails = {
         ...newExpense,
         estado,
         deuda,
+        montoRestante,
       };
 
-      // Enviar el gasto al backend
+      console.log("gasto", montoRestante);
+
+
       const data = await createExpense(expenseWithDetails);
 
       if (data) {
-        // Actualiza el límite del presupuesto solo si no genera deuda
-        if (montoRestante > 0) {
-          await updateBudgetLimit(
-            newExpense.presupuesto_id,
-            newExpense.id,
-            montoRestante
-          );
-        }
 
-        // Mostrar alerta de éxito
+        const gastoId = data.id; 
+
+        await updateBudgetLimit(
+          newExpense.presupuesto_id, 
+          gastoId, 
+          newExpense.monto 
+        );
+
+     
         await MySwal.fire({
           title: "¡Éxito!",
           text: deuda
@@ -82,6 +85,7 @@ const useExpenses = () => {
           timer: 1500,
         });
 
+       
         reloadData();
       } else {
         console.warn("No se pudo crear el gasto");

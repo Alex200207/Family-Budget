@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../constant";
-import { Gasto } from "../types";
+import { Gasto, Presupuesto } from "../types";
 
 const getExpenses = async () => {
   try {
@@ -16,18 +16,26 @@ const getExpenses = async () => {
   }
 };
 
-const updateBudgetLimit = async (presupuestoId: number, gastoID: number, gastoMonto:number) => {
+const updateBudgetLimit = async (
+  presupuestoId: Presupuesto["id"],
+  gastoID: Gasto["id"],
+  gastoMonto: number
+) => {
   try {
-    const response = await axios.patch(`${API_URL}/presupuesto/${presupuestoId}/${gastoID}`, {
-      gastoMonto: gastoMonto,
-     
-    });
+   
+    const response = await axios.patch(
+      `${API_URL}/presupuesto/${presupuestoId}/${gastoID}`,
+      {
+        gastoMonto: gastoMonto, 
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error al actualizar el presupuesto:", error);
     throw error;
   }
 };
+
 
 const createExpense = async (newExpense: Gasto): Promise<Gasto> => {
   try {
@@ -43,4 +51,4 @@ const createExpense = async (newExpense: Gasto): Promise<Gasto> => {
   }
 };
 
-export { getExpenses, createExpense , updateBudgetLimit};
+export { getExpenses, createExpense, updateBudgetLimit };
