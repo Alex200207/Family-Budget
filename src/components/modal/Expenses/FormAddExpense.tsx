@@ -7,11 +7,13 @@ import useUsers from "../../../hook/useUsers";
 interface FFormAddExpenseProps {
   onClose: () => void;
   reloadData: () => void;
+  reloadBudget: () => void;
 }
 
 const FormAddExpense: React.FC<FFormAddExpenseProps> = ({
   onClose,
   reloadData,
+  reloadBudget,
 }) => {
   const { createNewExpense} = useExpenses();
   const { budget } = useBudgets();
@@ -62,6 +64,7 @@ const FormAddExpense: React.FC<FFormAddExpenseProps> = ({
     e.preventDefault();
     await createNewExpense(formData);
     reloadData();
+    reloadBudget();
     onClose();
   };
 

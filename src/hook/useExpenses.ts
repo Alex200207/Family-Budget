@@ -12,14 +12,16 @@ const MySwal = withReactContent(Swal);
 
 const useExpenses = () => {
   const [expense, setExpense] = useState<Gasto[]>([]);
-  const { budget } = useBudget();
+  const { budget,  } = useBudget();
+  
   const [reload, setReload] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchData();
+    
+    fetchExpense();
   }, [reload]);
 
-  const fetchData = async () => {
+  const fetchExpense = async () => {
     try {
       const data = await getExpenses();
       if (data) {

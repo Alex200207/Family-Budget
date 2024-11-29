@@ -24,14 +24,15 @@ const useBudget = () => {
     }
   };
 
-  const reloadData = () => {
+  const reloadBudget = () => {
     setReload((prev) => !prev);
   };
 
   return {
     budget,
     setBudget,
-    reloadData,
+    reloadBudget,
+    fetchData,
   };
 };
 export default useBudget;

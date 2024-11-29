@@ -1,4 +1,3 @@
-
 import { Table } from "../components/Table";
 import useExpenses from "../hook/useExpenses";
 import { Gasto } from "../types";
@@ -20,9 +19,9 @@ interface ExpenseRow {
 }
 
 export default function Gastos() {
-  const { expense } = useExpenses();
+  const { expense, reloadData } = useExpenses();
   const { users } = useUsers();
-  const { budget } = useBudgets();
+  const { budget, reloadBudget } = useBudgets();
   const [isFormAddModalOpen, setIsFormAddModalOpen] = useState(false);
 
   const findUser = (id: number) => {
@@ -41,6 +40,10 @@ export default function Gastos() {
 
   const closeFormAddModal = () => {
     setIsFormAddModalOpen(false);
+  };
+
+  const openAmountExpense = (row: ExpenseRow) => {
+    console.log("Row:", row);
   };
 
   const transformedExpense: Gasto[] = expense.map((expense) => ({
@@ -93,14 +96,14 @@ export default function Gastos() {
       header: "Estado",
       accessor: "estado",
       cell: (row: ExpenseRow) => {
-        // Aquí se mejora la identificación del estado
+       
         let estadoText = "Pendiente";
         let estadoColor = "bg-red-500";
         if (row.estado === 1) {
           estadoText = "Pagado";
           estadoColor = "bg-green-500";
         } else if (row.estado === 2) {
-          estadoText = "En Proceso"; // Caso extra si se utiliza
+          estadoText = "En Proceso"; 
           estadoColor = "bg-yellow-500";
         }
         return (
@@ -117,8 +120,32 @@ export default function Gastos() {
         <span className="font-semibold text-red-500">{row.deuda}</span>
       ),
     },
+    {
+      header: "Fecha",
+      accessor: "fecha",
+      cell: (row: ExpenseRow) => {
+        return row.fecha ? new Date(row.fecha).toLocaleDateString() : "-";
+      },
+    },
+    {
+      header: "acciones",
+      accessor: "acciones",
+      cell: (row: ExpenseRow) => (
+        <div className="flex items-center space-x-3">
+          <button
+            className="btn btn-secondary"
+            onClick={() => openAmountExpense(row)}
+          >
+            +
+          </button>
+          <button className="border border-red-600 rounded-sm px-2 py-1 text-red-600 hover:bg-red-600 hover:text-white">
+            Eliminar
+          </button>
+        </div>
+      ),
+    },
   ];
-  
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -130,7 +157,11 @@ export default function Gastos() {
       <Table data={transformedExpense} columns={columns} />
 
       <CustomModal isOpen={isFormAddModalOpen} onClose={closeFormAddModal}>
-        <FormAddExpense onClose={closeFormAddModal} reloadData={() => {}} />
+        <FormAddExpense
+          onClose={closeFormAddModal}
+          reloadData={reloadData}
+          reloadBudget={reloadBudget}
+        />
       </CustomModal>
     </div>
   );
