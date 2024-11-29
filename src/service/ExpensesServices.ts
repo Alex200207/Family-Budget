@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../constant";
+import { Gasto } from "../types";
 
 const getExpenses = async () => {
   try {
@@ -15,4 +16,31 @@ const getExpenses = async () => {
   }
 };
 
-export { getExpenses };
+const updateBudgetLimit = async (presupuestoId: number, gastoID: number, gastoMonto:number) => {
+  try {
+    const response = await axios.patch(`${API_URL}/presupuesto/${presupuestoId}/${gastoID}`, {
+      gastoMonto: gastoMonto,
+     
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error al actualizar el presupuesto:", error);
+    throw error;
+  }
+};
+
+const createExpense = async (newExpense: Gasto): Promise<Gasto> => {
+  try {
+    const response = await axios.post(`${API_URL}/gastos`, newExpense);
+    if (response.status === 201) {
+      return response.data;
+    } else {
+      throw new Error("Failed to add new expense");
+    }
+  } catch (err) {
+    console.log(err, "No se pudo agregar el nuevo gasto");
+    throw err;
+  }
+};
+
+export { getExpenses, createExpense , updateBudgetLimit};

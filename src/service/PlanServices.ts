@@ -28,8 +28,48 @@ const createPlan = async (newPlan: Plan) => {
     console.error("Ha ocurrido un error al crear el plan", error);
     return false;
   }
-}
+};
+
+const deletePlan = async (id: string) => {
+  try {
+    const response = await axios.delete(`${API_URL}/plan/${id}`);
+    if (response.status === 200) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Ha ocurrido un error al borrar el plan", error);
+    return false;
+  }
+};
+
+const incrementAmount = async (
+  id: string,
+  amount: number
+): Promise<boolean> => {
+  try {
+    const response = await axios.patch(`${API_URL}/plan/${id}`, { amount });
+    return response.status === 200;
+  } catch (error) {
+    console.error("Error al actualizar el monto del plan:", error);
+    return false;
+  }
+};
 
 
+const editPlan = async (id: Plan["id"], updatedPlan: Partial<Plan>) => {
+  try {
+    const response = await axios.put(`${API_URL}/plan/${id}`, updatedPlan);
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      throw new Error("Failed to update plan");
+    }
+  } catch (err) {
+    console.log(err, "No se pudo actualizar los datos");
+    throw err;
+  }
+};
 
-export { getPlans, createPlan };
+export { getPlans, createPlan, deletePlan, incrementAmount, editPlan };

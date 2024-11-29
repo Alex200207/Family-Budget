@@ -1,12 +1,13 @@
 import moment from "moment";
 import "moment/locale/es";
-import usePlan from "../hook/usePlan";
+import usePlan, { Plan } from "../hook/usePlan";
 import { Table } from "../components/Table";
 import useUsers from "../hook/useUsers";
 import Modal from "../components/modal/CustomModal";
 import { useState } from "react";
 import FormAdd from "../components/modal/FormAdd";
 import AddAmountModal from "../components/modal/AddAmountModal";
+import FormEdit from "../components/modal/FormEdit";
 
 interface PlanRow {
   id: number;
@@ -18,15 +19,34 @@ interface PlanRow {
   fecha: string;
   progreso: number;
   usuario_id: number;
+  objetivo?: string;
 }
 
 export default function Planes() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFormAddModalOpen, setIsFormAddModalOpen] = useState(false);
+  const [isFormEditModalOpen, setIsFormEditModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<PlanRow | null>(null);
+  const [selectAmount, setSelectAmount] = useState<PlanRow| null>(null);
   const [isAddAmountModalOpen, setIsAddAmountModalOpen] = useState(false);
 
-  const { plans ,reloadData} = usePlan();
+  const { plans, reloadData, deletePlans, incrementAmounts, editPlanData } =
+    usePlan();
   const { users } = useUsers();
+
+  const handleDelete = async (id: string) => {
+    await deletePlans(id);
+    reloadData();
+  };
+  const updateAmount = async (plan: PlanRow, amount: number) => {
+    await incrementAmounts(plan.id.toString(), amount);
+    reloadData();
+  };
+
+  const handleEditSave = async (updatedPlan: Plan) => {
+    await editPlanData(updatedPlan.id, updatedPlan);
+    reloadData();
+    closeFormEditModal();
+  };
 
   const columns = [
     {
@@ -92,11 +112,18 @@ export default function Planes() {
           >
             +
           </button>
+
           <button
-            className="btn btn-danger"
-            onClick={() => openAddAmountModal(row)}
+            className="border border-red-600 rounded-sm px-2 py-1 text-red-600 hover:bg-red-600 hover:text-white"
+            onClick={() => handleDelete(row.id.toString())}
           >
-            -
+            Eliminar
+          </button>
+          <button
+            className="border border-blue-600 rounded-sm px-2 py-1 text-blue-600 hover:bg-blue-600 hover:text-white"
+            onClick={() => openFormEditModal(row)}
+          >
+            Editar
           </button>
         </div>
       ),
@@ -122,26 +149,33 @@ export default function Planes() {
   }));
 
   const openModal = () => {
-    setIsModalOpen(true);
+    setIsFormAddModalOpen(true);
   };
 
-  // Función para cerrar el modal
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeFormAddModal = () => {
+    setIsFormAddModalOpen(false);
   };
-  const openAddAmountModal = (plan: PlanRow) => {
+
+  const openFormEditModal = (plan: PlanRow) => {
     setSelectedPlan(plan);
+    setIsFormEditModalOpen(true);
+  };
+
+  const closeFormEditModal = () => {
+    setSelectedPlan(null);
+    setIsFormEditModalOpen(false);
+  };
+
+  const openAddAmountModal = (plan: PlanRow) => {
+    setSelectAmount(plan);
     setIsAddAmountModalOpen(true);
   };
 
   const closeAddAmountModal = () => {
-    setSelectedPlan(null);
+    setSelectAmount(null);
     setIsAddAmountModalOpen(false);
   };
-
-  const handleSaveAmount = () => {
-    console.log('add');
-  }
+  console.log("Plan recibido:", plans);
 
   return (
     <div className="space-y-6">
@@ -153,13 +187,25 @@ export default function Planes() {
       </div>
 
       <Table data={transformedPlans} columns={columns} />
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <FormAdd onClose={closeModal} reloadData={reloadData}/>
+      <Modal isOpen={isFormAddModalOpen} onClose={closeFormAddModal}>
+        <FormAdd onClose={closeFormAddModal} reloadData={reloadData} />
       </Modal>
+
+      <Modal isOpen={isFormEditModalOpen} onClose={closeFormEditModal}>
+        <FormEdit
+          plan={selectedPlan ? { ...selectedPlan, objetivo: selectedPlan.objetivo || "" } : null}
+          onClose={closeFormEditModal}
+          onSave={handleEditSave}
+        />
+      </Modal>
+
       <AddAmountModal
-        plan={selectedPlan}
+        plan={selectAmount}
+        reloadData={reloadData}
         onClose={closeAddAmountModal}
-        onSave={handleSaveAmount} isOpen={isAddAmountModalOpen}      />
+        isOpen={isAddAmountModalOpen}
+        updateAmount={updateAmount}
+      />
     </div>
   );
 }

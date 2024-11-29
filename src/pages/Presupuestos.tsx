@@ -15,8 +15,8 @@ interface BudgetRow {
 }
 
 export default function Presupuestos() {
-  const { expense } = useExpenses(); // Arreglo de gastos
-  const { budget } = useBudget(); // Arreglo de presupuestos
+  const { expense } = useExpenses(); 
+  const { budget } = useBudget(); 
 
   const columns = [
     {
@@ -54,11 +54,11 @@ export default function Presupuestos() {
     },
   ];
 
-  // Transformar presupuestos con cálculos dinámicos
+
   const transformedBudget: BudgetRow[] = budget.map((budgets) => {
     const totalGastado = expense
-      .filter((exp) => exp.presupuesto_id === budgets.id) // Filtra gastos por presupuesto
-      .reduce((sum, exp) => sum + exp.monto, 0); // Suma los montos de los gastos
+      .filter((exp) => exp.presupuesto_id === budgets.id) 
+      .reduce((sum, exp) => sum + exp.monto, 0); 
 
     const restante = budgets.limite - totalGastado;
     const porcentaje = (totalGastado / budgets.limite) * 100;
@@ -70,8 +70,8 @@ export default function Presupuestos() {
       limite: budgets.limite,
       categoria: budgets.categoria,
       gastado: totalGastado,
-      restante: Math.max(restante, 0), // Asegúrate de que no sea negativo
-      porcentaje: Math.min(porcentaje, 100), // Máximo 100%
+      restante: Math.max(restante, 0), 
+      porcentaje: Math.min(porcentaje, 100), 
     };
   });
 

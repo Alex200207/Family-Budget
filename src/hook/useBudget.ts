@@ -30,6 +30,7 @@ const useBudget = () => {
 
   return {
     budget,
+    setBudget,
     reloadData,
   };
 };

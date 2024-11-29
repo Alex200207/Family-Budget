@@ -11,8 +11,8 @@ const CustomModal = ({ isOpen, onClose, children }: ModalProps) => {
   if (!isOpen) return null; 
 
   return (
-    <div className="fixed inset-0 h-full flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+    <div className="fixed inset-0  flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg ">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">Agregar un nuevo plan</h2>
           <button

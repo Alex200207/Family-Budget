@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import usePlan, { Plan } from "../../hook/usePlan";
+import useUsers from "../../hook/useUsers";
 
 interface FormAddProps {
   onClose: () => void;
@@ -8,10 +9,10 @@ interface FormAddProps {
 
 const Form: React.FC<FormAddProps> = ({ onClose, reloadData }) => {
   const { createNewPlan } = usePlan();
+  const { users } = useUsers();
 
   const [formValues, setFormValues] = useState<Plan>({
     id: 0,
-    monto: 0,
     fecha_limite: new Date(),
     objetivo: "",
     actual: 0,
@@ -31,7 +32,7 @@ const Form: React.FC<FormAddProps> = ({ onClose, reloadData }) => {
     if (name === "fecha_limite") {
       setFormValues((prevValues) => ({
         ...prevValues,
-        [name]: new Date(value), 
+        [name]: new Date(value),
       }));
     } else {
       setFormValues((prevValues) => ({
@@ -56,11 +57,11 @@ const Form: React.FC<FormAddProps> = ({ onClose, reloadData }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center custom-z bg-black bg-opacity-50 ">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 md:w-2/3 lg:w-1/2">
-        <h2 className="text-xl font-semibold text-gray-800">Agregar Plan</h2>
+      <div className="bg-white rounded-lg shadow-lg p-5 ">
+        <h2 className="text-xl font-semibold text-gray-800 text-center">Agregar Plan</h2>
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -72,20 +73,6 @@ const Form: React.FC<FormAddProps> = ({ onClose, reloadData }) => {
               value={formValues.objetivo}
               onChange={handleInputChange}
               placeholder="Objetivo del plan"
-              className="border border-gray-300 rounded-md p-3 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Monto
-            </label>
-            <input
-              type="number"
-              name="monto"
-              value={formValues.monto}
-              onChange={handleInputChange}
-              placeholder="Monto inicial"
               className="border border-gray-300 rounded-md p-3 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -122,15 +109,20 @@ const Form: React.FC<FormAddProps> = ({ onClose, reloadData }) => {
             <label className="block text-sm font-medium text-gray-700">
               Usuario ID
             </label>
-            <input
-              type="number"
+            <select
               name="usuario_id"
               value={formValues.usuario_id}
               onChange={handleInputChange}
-              placeholder="ID del usuario"
               className="border border-gray-300 rounded-md p-3 w-full mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
-            />
+            >
+            <option value="">Selecciona un usuario</option>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.nombres}
+              </option>
+            ))}
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
