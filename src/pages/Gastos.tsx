@@ -148,7 +148,7 @@ export default function Gastos() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-center sm:space-x-6">
-        <h1 className="text-2xl font-semibold">Planes Financieros</h1>
+        <h1 className="text-2xl font-semibold">Gastos</h1>
         <button className="btn btn-primary" onClick={openModal}>
           Nuevo Gasto
         </button>
