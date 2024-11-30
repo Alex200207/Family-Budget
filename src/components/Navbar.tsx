@@ -1,6 +1,5 @@
-
-import { Bell, User } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Bell } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
@@ -12,11 +11,7 @@ export default function Navbar() {
           </Link>
           <div className="flex items-center space-x-4">
             <Bell className="h-6 w-6 cursor-pointer hover:text-indigo-200" />
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center">
-                <User className="h-5 w-5" />
-              </div>
-            </div>
+            <div className="flex items-center space-x-2"></div>
           </div>
         </div>
       </div>
