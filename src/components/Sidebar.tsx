@@ -7,6 +7,7 @@ const links = [
   { to: '/gastos', icon: Receipt, label: 'Gastos' },
   { to: '/presupuestos', icon: PieChart, label: 'Presupuestos' },
   { to: '/planes', icon: Target, label: 'Planes' },
+  {to: '/ingresos', icon: Receipt, label: 'Ingresos'},
 ];
 
 export default function Sidebar() {

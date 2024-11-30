@@ -19,6 +19,14 @@ export interface Gasto {
   deuda?: number;
 }
 
+export interface Ingreso {
+  id: number;
+  fecha?: Date;
+  monto: number;
+  usuario_id:number;
+  origen: string;
+}
+
 
 
 export interface Transaccion {

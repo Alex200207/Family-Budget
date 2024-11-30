@@ -19,8 +19,8 @@ export default function Dashboard() {
 
   const estadisticas = [
     { titulo: 'Balance Total', cantidad: '$5.240', cambio: '+8%', icon: Wallet },
-    { titulo: 'Gastos Mensuales', cantidad: '$1.850', cambio: '-2%', icon: PieChart },
-    { titulo: 'Ingresos Mensuales', cantidad: `${showExpenseTotal()}`, cambio: '+12%', icon: TrendingUp },
+    { titulo: 'Gastos Mensuales', cantidad: `${showExpenseTotal()}`, cambio: '', icon: PieChart },
+    { titulo: 'Ingresos Mensuales', cantidad: ``, cambio: '', icon: TrendingUp },
     { titulo: 'Miembros Familia', cantidad: `${users.length}`, icon: Users },
   ];
 

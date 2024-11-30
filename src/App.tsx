@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Gastos from './pages/Gastos';
 import Presupuestos from './pages/Presupuestos';
 import Planes from './pages/Planes';
+import Ingresos from './pages/Ingresos';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="gastos" element={<Gastos />} />
           <Route path="presupuestos" element={<Presupuestos />} />
           <Route path="planes" element={<Planes />} />
+          <Route path="ingresos" element={<Ingresos/>} />
         </Route>
       </Routes>
     </BrowserRouter>
