@@ -2,10 +2,12 @@ import { PieChart, Wallet, TrendingUp, Users } from 'lucide-react';
 
 import useUsers from '../hook/useUsers';
 import useExpenses from '../hook/useExpenses';
+import useIncome from '../hook/useIncome';
 
 export default function Dashboard() {
   const { users } = useUsers();
   const {  expense} = useExpenses();
+  const {income} = useIncome();
 
   const showExpenseTotal = () => {
     let total = 0;
@@ -15,12 +17,24 @@ export default function Dashboard() {
     return total;
   }
 
+  const showIncomeTotal = () => {
+    let total = 0;
+    income.forEach((inc) => {
+      total += inc.monto;
+    });
+    return total;
+  }
+
+  const showBalance = () => {
+    return showIncomeTotal() - showExpenseTotal();
+  }
+
 
 
   const estadisticas = [
-    { titulo: 'Balance Total', cantidad: '$5.240', cambio: '+8%', icon: Wallet },
+    { titulo: 'Balance Total', cantidad: `${showBalance()}`, cambio: '', icon: Wallet },
     { titulo: 'Gastos Mensuales', cantidad: `${showExpenseTotal()}`, cambio: '', icon: PieChart },
-    { titulo: 'Ingresos Mensuales', cantidad: ``, cambio: '', icon: TrendingUp },
+    { titulo: 'Ingresos Mensuales', cantidad: `${showIncomeTotal()}`, cambio: '', icon: TrendingUp },
     { titulo: 'Miembros Familia', cantidad: `${users.length}`, icon: Users },
   ];
 
